@@ -4,7 +4,7 @@
   "description": "E-mail sending app",
   "main": "index.js",
   "scripts": {
-    "start": "node .",
+    "start": "nodemon node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -18,10 +18,15 @@
   "author": "Dante Souza e Souza",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "nodemailer": "^6.4.11"
+    "nodemailer": "^6.4.11",
+    "nodemailer-express-handlebars": "^4.0.0",
+    "nodemon": "^2.0.4",
+    "vercel": "^20.1.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",

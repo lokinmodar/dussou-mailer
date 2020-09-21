@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
+const dotenv = require('dotenv/config');
 
 const app = express();
 
@@ -28,14 +29,14 @@ var smtpTransport = nodemailer.createTransport({
   service: 'Gmail',
   port: 465,
   auth: {
-    user: 'dussouprotecoes',
-    pass: 'du$$$oumd'
+    user: process.env.GMAIL_username,
+    pass: process.env.GMAIL_pass
   }
 });
 
 var mailOptions = {
   from: data.email,
-  to: 'dussouprotecoes@gmail.com',
+  to: process.env.EMAIL_address,
   subject: 'Contato via formulário do site',
   html: `<p>Contato: ${data.name}</p>
           <p>Endereço de e-mail: ${data.email}</p>

@@ -1,5 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const fetch = require('isomorphic-fetch');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 
@@ -20,10 +22,54 @@ app.get('/', (req, res) => {
   res.send('Nothing to see here! :)');
 });
 
+const handleSend = async (req, res) => {
+  const secret_key = process.env.SECRET_KEY;
+  const { token } = req.body;
+
+  const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${token}`;
+
+  console.log(url);
+
+  await fetch(url, {
+    method: 'post',
+  })
+    .then((response) => response.json())
+    .then((google_response) => res.json({ google_response }))
+    .catch((error) => res.json({ error }));
+};
+
+app.post(
+  '/api/checkcaptcha',
+  handleSend
+); /* (req, res) => {
+  const recaptchaCheck = JSON.stringify({
+    body: {
+      secret: process.env.REACT_APP_reCAPTCHA_site_key,
+      response: req.token,
+    },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'X-Requested-With',
+    },
+  });
+  console.log(req.body);
+
+  /* app
+    .post('https://www.google.com/recaptcha/api/siteverify', recaptchaCheck)
+    .then(() => {
+      console.log(`statusCode: ${res.statusCode}`);
+      console.log(res);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}); */
+
 app.post('/api/v1', (req, res) => {
   const data = req.body;
-  // console.log(data);
 
+  console.log(data);
+  // TODO verify which site the front is calling to get the token
   const smtpTransport = nodemailer.createTransport({
     service: 'Gmail',
     port: 465,

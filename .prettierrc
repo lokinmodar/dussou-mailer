@@ -1,5 +1,6 @@
 {
   "singleQuote": true,
-  "jsxSingleQuete": true,
-  "trailingComma": "es5"
+  "jsxSingleQuote": true,
+  "trailingComma": "es5",
+  "endOfLine":"auto"
 }

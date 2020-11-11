@@ -28,7 +28,7 @@ const handleSend = async (req, res) => {
 
   const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${token}`;
 
-  // console.log(url);
+  console.log(url);
 
   await fetch(url, {
     method: 'post',

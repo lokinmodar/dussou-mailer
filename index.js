@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 app.listen(port, () => {
-  console.log('We are live on port 4444');
+  // console.log('We are live on port 4444');
 });
 
 app.get('/', (req, res) => {
@@ -28,7 +28,7 @@ const handleSend = async (req, res) => {
 
   const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${token}`;
 
-  console.log(url);
+  // console.log(url);
 
   await fetch(url, {
     method: 'post',
@@ -68,8 +68,8 @@ app.post(
 app.post('/api/v1', (req, res) => {
   const data = req.body;
 
-  console.log(data);
-  // TODO verify which site the front is calling to get the token
+  // console.log(data);
+  // DONE verify which site the front is calling to get the token
   const smtpTransport = nodemailer.createTransport({
     service: 'Gmail',
     port: 465,

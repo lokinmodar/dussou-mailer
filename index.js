@@ -3,11 +3,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fetch = require('isomorphic-fetch');
 const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
+
 const cors = require('cors');
 
 const app = express();
 
 const port = 4444;
+
+const { OAuth2 } = google.auth;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,7 +23,7 @@ app.listen(port, () => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Nothing to see here! :)');
+  res.send('<article><h1>404 - A página solicitada não existe!</h1></article>');
 });
 
 const handleSend = async (req, res) => {
@@ -28,7 +32,7 @@ const handleSend = async (req, res) => {
 
   const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${token}`;
 
-  console.log(url);
+  // console.log(url);
 
   await fetch(url, {
     method: 'post',
@@ -38,44 +42,33 @@ const handleSend = async (req, res) => {
     .catch((error) => res.json({ error }));
 };
 
-app.post(
-  '/api/checkcaptcha',
-  handleSend
-); /* (req, res) => {
-  const recaptchaCheck = JSON.stringify({
-    body: {
-      secret: process.env.REACT_APP_reCAPTCHA_site_key,
-      response: req.token,
-    },
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'X-Requested-With',
-    },
-  });
-  console.log(req.body);
-
-  /* app
-    .post('https://www.google.com/recaptcha/api/siteverify', recaptchaCheck)
-    .then(() => {
-      console.log(`statusCode: ${res.statusCode}`);
-      console.log(res);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-}); */
+app.post('/api/checkcaptcha', handleSend);
 
 app.post('/api/v1', (req, res) => {
   const data = req.body;
+
+  const myOAuth2Client = new OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET_KEY
+  );
+
+  myOAuth2Client.setCredentials({
+    refresh_token: process.env.REFRESH_TOKEN,
+  });
 
   // console.log(data);
   // DONE verify which site the front is calling to get the token
   const smtpTransport = nodemailer.createTransport({
     service: 'Gmail',
-    port: 465,
+    /*     port: 465, */
     auth: {
+      type: 'OAuth2',
       user: process.env.GMAIL_username,
-      pass: process.env.GMAIL_pass,
+      /* pass: process.env.GMAIL_pass, */
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET_KEY,
+      refreshToken: process.env.REFRESH_TOKEN,
+      accessToken: myOAuth2Client.getAccessToken(),
     },
   });
 
